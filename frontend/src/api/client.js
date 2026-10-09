@@ -1,48 +1,71 @@
-const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+
+const BASE_URL =
+  import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+
 const TOKEN_KEY = "sw_token";
 
-/** Turns a stored upload path like /uploads/passports/x.jpg into a full URL on the API host. */
+/**
+ * Turns a stored upload path into a full URL on the API host.
+ */
 export function assetUrl(path) {
   if (!path) return "";
-  if (/^https?:/i.test(path) || path.startsWith("/images/")) return path;
+  if (/^https?:/i.test(path) || path.startsWith("/images/")) {
+    return path;
+  }
   return `${BASE_URL.replace(/\/api\/?$/, "")}${path}`;
 }
 
+/**
+ * Use sessionStorage to isolate authentication tokens by browser tab.
+ * The token survives page refreshes in the same tab.
+ */
 export function getToken() {
-  return localStorage.getItem(TOKEN_KEY);
+  return sessionStorage.getItem(TOKEN_KEY);
 }
+
 export function setToken(token) {
-  if (token) localStorage.setItem(TOKEN_KEY, token);
-  else localStorage.removeItem(TOKEN_KEY);
+  if (token) {
+    sessionStorage.setItem(TOKEN_KEY, token);
+  } else {
+    sessionStorage.removeItem(TOKEN_KEY);
+  }
 }
 
 /**
- * Thin fetch wrapper: attaches the bearer token, parses JSON, and throws a
- * plain Error with the backend's message so callers can show it directly.
+ * Sends API requests with the current tab's authentication token.
  */
-export async function apiFetch(path, { method = "GET", body, headers } = {}) {
+export async function apiFetch(
+  path,
+  { method = "GET", body, headers } = {}
+) {
   const token = getToken();
-  const isForm = typeof FormData !== "undefined" && body instanceof FormData;
+  const isForm =
+    typeof FormData !== "undefined" && body instanceof FormData;
+
   const res = await fetch(`${BASE_URL}${path}`, {
     method,
     headers: {
-      // For FormData the browser sets the multipart boundary itself.
       ...(isForm ? {} : { "Content-Type": "application/json" }),
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...headers,
     },
-    body: body ? (isForm ? body : JSON.stringify(body)) : undefined,
+    body:
+      body !== undefined && body !== null
+        ? isForm
+          ? body
+          : JSON.stringify(body)
+        : undefined,
   });
 
   let data = null;
+
   try {
     data = await res.json();
   } catch {
-    // no JSON body (e.g. 204)
+    // Some responses, such as HTTP 204, have no JSON body.
   }
 
   if (res.status === 401 && token && !path.startsWith("/auth/login")) {
-    // Token expired or account disabled: drop it so the route guard sends the user to sign in.
     setToken(null);
     window.dispatchEvent(new Event("sw:unauthorized"));
   }
@@ -50,6 +73,7 @@ export async function apiFetch(path, { method = "GET", body, headers } = {}) {
   if (!res.ok) {
     throw new Error(data?.message || `Request failed (${res.status})`);
   }
+
   return data;
 }
 
