@@ -3,7 +3,10 @@ import User from "../models/User.js";
 import { ApiError } from "../middleware/ApiError.js";
 import { asyncHandler } from "../middleware/asyncHandler.js";
 import { studentFilterFor, assertCanAccessStudent } from "../middleware/scope.js";
-import { removePassportFile } from "../middleware/upload.js";
+import {
+  removePassportFile,
+  uploadPassportToCloudinary,
+} from "../middleware/upload.js";
 
 const POPULATE = [
   { path: "class", select: "name" },
@@ -53,28 +56,64 @@ export const updateStudent = asyncHandler(async (req, res) => {
 });
 
 /** PUT /api/students/:id/photo — multipart field "photo". Replaces any previous passport. */
+
+/** PUT /api/students/:id/photo — multipart field "photo". */
 export const uploadPhoto = asyncHandler(async (req, res) => {
-  if (!req.file) throw new ApiError(400, "Choose a passport photo to upload.");
+  if (!req.file) {
+    throw new ApiError(400, "Choose a passport photo to upload.");
+  }
+
   const student = await Student.findById(req.params.id);
+
   if (!student) {
-    removePassportFile(`/uploads/passports/${req.file.filename}`);
     throw new ApiError(404, "Student not found.");
   }
+
+  const uploaded = await uploadPassportToCloudinary(
+    req.file,
+    student._id.toString()
+  );
+
   const previous = student.photo;
-  student.photo = `/uploads/passports/${req.file.filename}`;
-  await student.save();
-  removePassportFile(previous);
+  student.photo = uploaded.url;
+
+  try {
+    await student.save();
+  } catch (error) {
+    // Avoid leaving an unreferenced Cloudinary image if saving fails.
+    await removePassportFile(uploaded.url);
+    throw error;
+  }
+
+  // Remove the old image only after the new URL has been saved.
+  if (previous && previous !== uploaded.url) {
+    await removePassportFile(previous);
+  }
+
   await student.populate(POPULATE);
+
   res.json({ success: true, student });
 });
 
+
 export const removePhoto = asyncHandler(async (req, res) => {
   const student = await Student.findById(req.params.id);
-  if (!student) throw new ApiError(404, "Student not found.");
-  removePassportFile(student.photo);
+
+  if (!student) {
+    throw new ApiError(404, "Student not found.");
+  }
+
+  const previous = student.photo;
+
   student.photo = "";
   await student.save();
+
+  if (previous) {
+    await removePassportFile(previous);
+  }
+
   await student.populate(POPULATE);
+
   res.json({ success: true, student });
 });
 
