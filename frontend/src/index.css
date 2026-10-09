@@ -269,3 +269,18 @@
     filter: saturate(.92) contrast(1.03);
   }
 }
+
+/* Temporary mobile scrolling flicker test */
+@media (max-width: 767px) {
+  .reveal,
+  .reveal.is-visible,
+  .hero-rise,
+  .arch-reveal,
+  .fade-in {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+    clip-path: none !important;
+    opacity: 1 !important;
+  }
+}
