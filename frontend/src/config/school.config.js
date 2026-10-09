@@ -73,7 +73,7 @@ export const schoolConfig = {
       "school admission Ogun State",
       "nursery and primary school",
     ],
-    ogImage: "/images/og-image.png", // 1200x630 recommended
+    ogImage: "/images/p 4.webp", // 1200x630 recommended
   },
 
   /* ------------------------------------------------------------------ */
@@ -92,7 +92,7 @@ export const schoolConfig = {
   /* Homepage                                                            */
   /* ------------------------------------------------------------------ */
  hero: {
-  image: "/images/hero.svg",
+  image: "/images/p 4.webp",
   imageAlt: "Learners at Gold Success Comprehensive College",
   supportingText:
     "A warm, well-ordered school community in Sagamu where children are known by name and encouraged to grow in knowledge, character and confidence.",
@@ -112,7 +112,7 @@ export const schoolConfig = {
   /* About                                                               */
   /* ------------------------------------------------------------------ */
   about: {
-   image: "/images/about.svg",
+   image: "/images/p 5.jpeg",
     imageAlt: "The school community",
     introduction:
       "Gold Success Comprehensive College serves families in Sagamu and the surrounding communities of Sagamu, Ogun State.",
