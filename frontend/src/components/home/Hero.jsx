@@ -22,7 +22,7 @@ export default function Hero() {
 
       <Container className="relative flex min-h-[min(46rem,calc(100vh-4.5rem))] items-end py-14 sm:py-20 lg:items-center lg:py-24">
         <div className="max-w-3xl">
-          <div className="hero-rise inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm font-semibold backdrop-blur-none" style={{ "--d": "0ms" }}>
+          <div className="hero-rise inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm font-semibold backdrop-blur-md" style={{ "--d": "0ms" }}>
             <span className={`h-2.5 w-2.5 rounded-full ${admissions.open ? "bg-secondary" : "bg-white/50"}`} />
             {status} · {admissions.session}
           </div>
@@ -50,15 +50,15 @@ export default function Hero() {
           </div>
 
           <div className="hero-rise mt-9 grid max-w-2xl gap-3 text-sm sm:grid-cols-3" style={{ "--d": "380ms" }}>
-            <div className="flex items-center gap-3 rounded-2xl border border-white/15 bg-white/10 px-4 py-3 backdrop-blur-none">
+            <div className="flex items-center gap-3 rounded-2xl border border-white/15 bg-white/10 px-4 py-3 backdrop-blur-md">
               <CheckCircle2 className="shrink-0 text-secondary" size={19} />
               <span>Child-focused learning</span>
             </div>
-            <div className="flex items-center gap-3 rounded-2xl border border-white/15 bg-white/10 px-4 py-3 backdrop-blur-none">
+            <div className="flex items-center gap-3 rounded-2xl border border-white/15 bg-white/10 px-4 py-3 backdrop-blur-md">
               <CheckCircle2 className="shrink-0 text-secondary" size={19} />
               <span>Strong parent partnership</span>
             </div>
-            <div className="flex items-center gap-3 rounded-2xl border border-white/15 bg-white/10 px-4 py-3 backdrop-blur-none">
+            <div className="flex items-center gap-3 rounded-2xl border border-white/15 bg-white/10 px-4 py-3 backdrop-blur-md">
               <MapPin className="shrink-0 text-secondary" size={19} />
               <span>{formatLocation()}</span>
             </div>

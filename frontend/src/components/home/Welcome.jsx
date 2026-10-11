@@ -17,7 +17,7 @@ export default function Welcome() {
             <div className="aspect-[4/3]">
               <Img src={homeImages.welcome} alt="Students learning together at school" width="1200" height="900" />
             </div>
-            <div className="absolute bottom-4 left-4 right-4 flex items-center gap-3 rounded-2xl border border-white/25 bg-dark/80 p-4 text-white backdrop-blur-none">
+            <div className="absolute bottom-4 left-4 right-4 flex items-center gap-3 rounded-2xl border border-white/25 bg-dark/80 p-4 text-white backdrop-blur-md">
               <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-secondary text-primary"><Sparkles size={19} /></span>
               <div>
                 <p className="font-semibold">Learning with purpose</p>
